@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Flip Game with WhatsApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+        }
+
+        .card {
+            width: 100px;
+            height: 150px;
+            background-color: #007BFF;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .card.selected {
+            background-color: #FF6347;
+            color: white;
+            cursor: default;
+        }
+
+        .card p {
+            display: none;
+        }
+
+        .card span {
+            display: block;
+        }
+
+        .notification {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #555;
+            display: none;
+        }
+
+        .whatsapp-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #25D366;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .whatsapp-button:hover {
+            background-color: #1EBE58;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-board" id="gameBoard">
+        <div class="card" data-message="You won a prize!"><span>Click me</span><p>You won a prize!</p></div>
+        <div class="card" data-message="Better luck next time!"><span>Click me</span><p>Better luck next time!</p></div>
+        <div class="card" data-message="Try again soon!"><span>Click me</span><p>Try again soon!</p></div>
+        <div class="card" data-message="Almost there!"><span>Click me</span><p>Almost there!</p></div>
+    </div>
+    <div class="notification" id="notification">You must send your choice to WhatsApp to see the response.</div>
+    <button class="whatsapp-button" id="whatsappButton">Send to WhatsApp</button>
+
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const whatsappButton = document.getElementById('whatsappButton');
+        const notification = document.getElementById('notification');
+        let selectedCard = null;
+        let selectedMessage = "";
+
+        // Add click event to each card
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (selectedCard || card.classList.contains('selected')) return;
+
+                // Set selected card and message
+                selectedCard = card;
+                selectedMessage = card.dataset.message;
+
+                // Change the card color
+                card.classList.add('selected');
+
+                // Show notification and WhatsApp button
+                notification.style.display = 'block';
+                whatsappButton.style.display = 'block';
+            });
+        });
+
+        // Handle WhatsApp button click
+        whatsappButton.addEventListener('click', () => {
+            if (!selectedCard) return;
+
+            const phoneNumber = "5511999999999"; // Replace with your number
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(selectedMessage)}`;
+            window.open(whatsappUrl, '_blank');
+
+            // Reveal the card message
+            selectedCard.classList.remove('selected');
+            selectedCard.classList.add('flipped');
+
+            // Hide notification and WhatsApp button
+            notification.style.display = 'none';
+            whatsappButton.style.display = 'none';
+
+            // Reset selection
+            selectedCard = null;
+            selectedMessage = "";
+        });
+    </script>
+</body>
+</html>
+
